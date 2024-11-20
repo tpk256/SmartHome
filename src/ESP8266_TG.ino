@@ -3,7 +3,6 @@
 
 FastBot2 bot;
 int64_t chat_id;
-
 void update (fb::Update& u){
     // Добавляем конкретный список userov tg (id)
 
