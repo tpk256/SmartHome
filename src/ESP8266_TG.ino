@@ -1,6 +1,11 @@
 #include <FastBot2.h>
 #include <cstring>
 
+#define D2 4
+#define D1 5
+
+
+
 FastBot2 bot;
 int64_t chat_id;
 const char* SSID = "tps";
@@ -62,6 +67,9 @@ void setup() {
     Serial.print(".");
   }
   Serial.print("Connected");
+
+  pinMode(D2, OUTPUT);
+  digitalWrite(D2, LOW); 
   bot.setToken("7282964831:AAFpXPLc0eODNVYyO5QNGbrzgDYIfKC3wGE");
   bot.skipUpdates(0);
   bot.setLimit(3);
