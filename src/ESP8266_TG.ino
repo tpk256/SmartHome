@@ -23,7 +23,7 @@ void setup() {
 
   // Тут дополнить подключение к wifi
 
-  bot.setToken("7282964831:AAFpXPLc0eODNVYyO5QNGbrzgDYIfKC3wGE");
+  bot.setToken("");
   bot.skipUpdates(0);
   bot.setLimit(3);
   bot.setPollMode(fb::Poll::Sync, 4000);
