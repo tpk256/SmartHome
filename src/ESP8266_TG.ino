@@ -1,30 +1,36 @@
 #include <FastBot2.h>
 #include <cstring>
+#include "utilsT.h"
+
+
 
 #define D2 4
 #define D1 5
 
 
 
+OnlyAccessUsers data_bot;
 FastBot2 bot;
-int64_t chat_id;
+
 const char* SSID = "tps";
 const char* PASSWORD = "2743113077"; 
 
+
+// Работу со структурой сделать через команды.
 
 void update_get_keyboard(fb::Update& u){
   fb::Message msg;
   fb::InlineMenu menu;
   msg.chatID = u.message().chat().id();
 
-  if ( strcmp(u.message().text().c_str(), "/menu") == 0){
+  if ( strcmp(u.message().text().c_str(), "/door") == 0){
     msg.text = "Open the door?\0";
     menu.addButton("Yes", "open_door_yes");
     menu.addButton("No", "open_door_no");
     msg.setInlineMenu(menu);
   }
   else{
-    msg.text = "I can't understand this command, use please /menu\0";
+    msg.text = "I can't understand this command, use please /door\0";
   }
   bot.sendMessage(msg);
 
