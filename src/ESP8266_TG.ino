@@ -77,7 +77,10 @@ void executeCommand(fb::Update& u){
     else if(
       !strncmp("/add_user", command, LEN_COMMAND_ADD_USER) && 
       data_bot.IsAdmin(userId)){
-      
+        if (data_bot.AddUser(command))
+          msg.text = "Success added";
+        else
+          msg.text = "Error add";
 
     }
     else if(!strcmp("/delete_users", command ) && 
