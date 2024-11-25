@@ -44,37 +44,51 @@ bool isCommand(const char* text){
 // }
 
 void executeCommand(fb::Update& u){
-  fb::Message msg;
-  msg.chatID = u.message().chat().id();
-  const char *command = u.message().text().c_str();
-  if (!isCommand(command)){
-    msg.text = "Please use command\0";
-    bot.sendMessage(msg);
-    return;
-  }
-  if (!strcmp("/start", command)){
-    if(data_bot.HasAdmin()){
-        if (!data_bot.ExistUser(msg.chatID.c_str())) return;
+    fb::Message msg;
+    fb::Menu menu;
+    msg.chatID = u.message().chat().id();
+    const char *command = u.message().text().c_str(), *userId = u.message().from().id().c_str();
+    if (!isCommand(command)){
+      msg.text = "Please use command";
+      bot.sendMessage(msg);
+      return;
     }
-    else
-      data_bot.AddAdmin(msg.chatID.c_str(), strlen(msg.chatID.c_str()));
-      // Добавь клаву
+    if (!strcmp("/start", command)){
+      if(data_bot.HasAdmin())
+          if (!data_bot.ExistUser(userId)) 
+            return;
+      else
+        data_bot.AddAdmin(userId);
+        
+        menu.addButton("/help").addButton("/door");
 
-  }
-  else if(!strncmp("/add_user", command, LEN_COMMAND_ADD_USER)){
-    // Дописать реализацию
+    }
+    else if(!strcmp("/door", command) && data_bot.ExistUser(userId)){
+      // Дописать реализацию
+    }
+    else if (!strcmp("/help", command) && (data_bot.ExistUser(userId) || data_bot.IsAdmin(userId))){
+      // Вывод справочной информации
 
-  }
-  else if(!strcmp("/delete_users", command)){
-    // Дописать реализацию
-  }
-  else if(!strcmp("/reset_admin", command)){
-    // Дописать реализацию
-  }
-  else{
-    msg.text = "Unknown command!\0";
+    }
+    else if(
+      !strncmp("/add_user", command, LEN_COMMAND_ADD_USER) && 
+      data_bot.IsAdmin(userId)){
+      // Дописать реализацию
 
-  }
+    }
+    else if(!strcmp("/delete_users", command ) && 
+      data_bot.IsAdmin(userId)){
+      // Дописать реализацию
+    }
+    else if(!strcmp("/reset_admin", command) && 
+      data_bot.IsAdmin(userId)){
+      // Дописать реализацию
+    }
+    else{
+      msg.text = "Unknown command!\0";
+
+    }
+    bot.sendMessage(msg);
 }
 
 

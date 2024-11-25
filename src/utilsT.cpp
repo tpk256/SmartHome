@@ -47,10 +47,10 @@ struct OnlyAccessUsers{
         return true;
 
     }
-    bool AddUser(const char* userId, short len){
+    bool AddUser(const char* userId){
         if (_countUsers == MAX_USERS)
             return false;
-        _users[++_countUsers] = new char[len + 1];
+        _users[++_countUsers] = new char[strlen(userId) + 1];
         if( !_users[_countUsers]){
             _countUsers--;
             return false;
@@ -58,13 +58,19 @@ struct OnlyAccessUsers{
         strcpy( _users[_countUsers], userId);
         return true;
     }
-    bool AddAdmin(const char* userId, short len){
+    bool AddAdmin(const char* userId){
         if (HasAdmin()) return false;
-        _users[ADMIN_INDEX] = new char[len + 1];
+        _users[ADMIN_INDEX] = new char[strlen(userId) + 1];
         if (_users[ADMIN_INDEX] == nullptr)
             return false;
         _hasAdmin = true;
         strcpy(_users[ADMIN_INDEX], userId);
+    }
+
+    bool IsAdmin(const char* userId){
+        if (!HasAdmin()) return false;
+
+        return !strcmp(_users[0], userId);
     }
 
 };
