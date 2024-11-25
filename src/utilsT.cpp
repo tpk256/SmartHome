@@ -1,6 +1,8 @@
 #include <string.h>
+#include <cctype>
 #define MAX_USERS 4
 #define ADMIN_INDEX 0
+#define LEN_USER_ID 11
 
 
 struct OnlyAccessUsers{
@@ -47,15 +49,30 @@ struct OnlyAccessUsers{
         return true;
 
     }
-    bool AddUser(const char* userId){
+    bool _IsValidUserId(const char* userId){
+        // Полагаем, что длина UserId in [6, 11]
+        short len = strlen(userId);
+        if (len <= 5 || len > 11) return false; // maybe will be bug
+        for (short i = 0; i < len; i++)
+            if (!isdigit( userId[i])) return false;
+        return true;
+    }
+    char * _ParseUserId(const char* cmd){
+        char * ans = new char[strlen(cmd) + 1]{};
+        if (!ans) return ans;
+        for(short i = 9; i < strlen(cmd); i++){
+            ans[i - 9] = cmd[i]; 
+        }
+        return ans;
+
+    }
+    bool AddUser(const char* cmd){
         if (_countUsers == MAX_USERS)
             return false;
-        _users[++_countUsers] = new char[strlen(userId) + 1];
-        if( !_users[_countUsers]){
-            _countUsers--;
-            return false;
-        }
-        strcpy( _users[_countUsers], userId);
+        char *userId = _ParseUserId(cmd);
+        if (!userId) return false; // значит, что памяти нет под юзера(нулевой указатель)
+        if(!_IsValidUserId(userId)) return false;
+        _users[++_countUsers] = userId;
         return true;
     }
     bool AddAdmin(const char* userId){

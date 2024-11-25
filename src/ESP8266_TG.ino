@@ -55,13 +55,17 @@ void executeCommand(fb::Update& u){
     }
     if (!strcmp("/start", command)){
       if(data_bot.HasAdmin())
-          if (!data_bot.ExistUser(userId)) 
-            return;
+          if (!data_bot.ExistUser(userId)) {
+              msg.text = "ACCESS DENIED!";
+              bot.sendMessage(msg);
+              return;
+          }
+            
       else
         data_bot.AddAdmin(userId);
         
         menu.addButton("/help").addButton("/door");
-
+        msg.setMenu(menu);
     }
     else if(!strcmp("/door", command) && data_bot.ExistUser(userId)){
       // Дописать реализацию
@@ -73,7 +77,7 @@ void executeCommand(fb::Update& u){
     else if(
       !strncmp("/add_user", command, LEN_COMMAND_ADD_USER) && 
       data_bot.IsAdmin(userId)){
-      // Дописать реализацию
+      
 
     }
     else if(!strcmp("/delete_users", command ) && 
