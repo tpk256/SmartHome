@@ -82,7 +82,6 @@ struct OnlyAccessUsers{
             return false;
         _hasAdmin = true;
         strcpy(_users[ADMIN_INDEX], userId);
-        return true;
     }
 
     bool IsAdmin(const char* userId){
