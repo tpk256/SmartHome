@@ -7,32 +7,32 @@
 
 
 struct OnlyAccessUsers{
-    char**_users;
+    int* _users;
     int _countUsers = 0;
     bool _hasAdmin = false;
 
     OnlyAccessUsers() {
-        _users = new char*[MAX_USERS + 1]; // выделяем место под пользователей
+        _users = new int[MAX_USERS + 1]; // выделяем место под пользователей
         for (int i = 0; i <= MAX_USERS; ++i) {
-            _users[i] = nullptr;
+            _users[i] = -1;
         }
     }
     bool HasAdmin() { 
         return _hasAdmin;
     }
 
-    bool ExistUser(const char* userId){
+    bool ExistUser(int userId){
         if (!_countUsers) return false;
 
         for( int i = 1; i <= _countUsers; i++){
-            if (!strcmp(_users[i], userId)) return true;
+            if (_users[i] == userId) return true;
         }
         return false;
     }
     bool ResetAdmin(){
         if (HasAdmin()){
-            delete[] _users[0];
-            _users[0] = nullptr;
+       
+            _users[0] = -1;
             _hasAdmin = false;
             return true;
         }
@@ -43,8 +43,8 @@ struct OnlyAccessUsers{
         if (_countUsers == 0) return false;
         short i = _countUsers;
         for( ; i >= 1; i--){
-            delete[] _users[i];
-            _users[i] = nullptr;
+
+            _users[i] = -1;
         }
         _countUsers = i;
         return true;
@@ -67,30 +67,28 @@ struct OnlyAccessUsers{
         return ans;
 
     }
-    bool AddUser(const char* cmd){
-        //TODO
-        if (_countUsers == MAX_USERS)
-            return false;
-        char *userId = _ParseUserId(cmd);
-        if (!userId) return false; // значит, что памяти нет под юзера(нулевой указатель)
-        if(!_IsValidUserId(userId)) return false;
-        _users[++_countUsers] = userId;
-        return true;
-    }
-    bool AddAdmin(const char* userId){
+    // bool AddUser(const char* cmd){
+    //     //TODO
+    //     if (_countUsers == MAX_USERS)
+    //         return false;
+    //     char *userId = _ParseUserId(cmd);
+    //     if (!userId) return false; // значит, что памяти нет под юзера(нулевой указатель)
+    //     if(!_IsValidUserId(userId)) return false;
+    //     _users[++_countUsers] = userId;
+    //     return true;
+    // }
+    bool AddAdmin(int userId){
         if (HasAdmin()) return false;
-        _users[ADMIN_INDEX] = new char[strlen(userId) + 1];
-        if (_users[ADMIN_INDEX] == nullptr)
-            return false;
         _hasAdmin = true;
-        strcpy(_users[ADMIN_INDEX], userId);
+        _users[ADMIN_INDEX] = userId;
         return true;
     }
 
-    bool IsAdmin(const char* userId){
-        if (!HasAdmin()) return false;
+    bool IsAdmin(int userId){
+        if (!HasAdmin()) 
+            return false;
 
-        return Text(_users[0]) ==  Text(userId);
+        return _users[ADMIN_INDEX] ==  userId;
     }
 
 };

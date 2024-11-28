@@ -29,7 +29,7 @@ void executeCommand(fb::Update& u){
     fb::InlineMenu inlineMenu;
     msg.chatID = u.message().chat().id();
     Text command = u.message().text(); 
-    const char* userId = u.message().from().id().c_str();
+    int userId = u.message().from().id().toInt32();
 
 
     if (!isCommand(command)){
@@ -38,16 +38,16 @@ void executeCommand(fb::Update& u){
       return;
     }
     if (command == "/start"){
-      if(data_bot.HasAdmin())
+      if(data_bot.HasAdmin()){
           if (!data_bot.ExistUser(userId)) {
               msg.text = "ACCESS DENIED!";
               bot.sendMessage(msg);
               return;
           }
-            
-      else
+       }     
+      else{
         data_bot.AddAdmin(userId);
-        
+       } 
         menu.addButton("/help").addButton("/door");
         msg.text = "Hello admin!";
         msg.setMenu(menu);
@@ -89,6 +89,9 @@ void executeCommand(fb::Update& u){
 
 void openDoor(fb::Update& u){
   Serial.println("Door opened!");
+  digitalWrite(D2, HIGH);
+  delay(5000);
+  digitalWrite(D2, LOW);
 }
 
 
@@ -127,7 +130,7 @@ void setup() {
   pinMode(D2, OUTPUT);
   digitalWrite(D2, LOW); 
   bot.setToken("7282964831:AAFpXPLc0eODNVYyO5QNGbrzgDYIfKC3wGE");
-  bot.skipUpdates(0);
+  bot.skipUpdates(-1);
   bot.setLimit(3);
   bot.setPollMode(fb::Poll::Sync, 4000);
   bot.attachUpdate(update);
