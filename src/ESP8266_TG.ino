@@ -3,7 +3,7 @@
 #include "utilsT.h"
 
 
-
+#define DATA_OPEN_DOOR "open_door_yes"
 #define D2 4
 #define D1 5
 #define LEN_COMMAND_ADD_USER 9
@@ -19,41 +19,25 @@ const char* PASSWORD = "2743113077";
 
 // Работу со структурой сделать через команды.
 
-bool isCommand(const char* text){
+bool isCommand(Text text){
     return text[0] == '/';
 }
-
-// void update_get_keyboard(fb::Update& u){
-//     fb::Message msg;
-//     fb::InlineMenu menu;
-//     msg.chatID = u.message().chat().id();
-    
-    
-
-//     if ( strcmp(, "/door") == 0){
-//       msg.text = "Open the door?\0";
-//       menu.addButton("Yes", "open_door_yes");
-//       menu.addButton("No", "open_door_no");
-//       msg.setInlineMenu(menu);
-//     }
-//     else{
-//       msg.text = "I can't understand this command, use please /door\0";
-//     }
-//     bot.sendMessage(msg);
-
-// }
 
 void executeCommand(fb::Update& u){
     fb::Message msg;
     fb::Menu menu;
+    fb::InlineMenu inlineMenu;
     msg.chatID = u.message().chat().id();
-    const char *command = u.message().text().c_str(), *userId = u.message().from().id().c_str();
+    Text command = u.message().text(); 
+    const char* userId = u.message().from().id().c_str();
+
+
     if (!isCommand(command)){
       msg.text = "Please use command";
       bot.sendMessage(msg);
       return;
     }
-    if (!strcmp("/start", command)){
+    if (command == "/start"){
       if(data_bot.HasAdmin())
           if (!data_bot.ExistUser(userId)) {
               msg.text = "ACCESS DENIED!";
@@ -65,29 +49,33 @@ void executeCommand(fb::Update& u){
         data_bot.AddAdmin(userId);
         
         menu.addButton("/help").addButton("/door");
+        msg.text = "Hello admin!";
         msg.setMenu(menu);
     }
-    else if(!strcmp("/door", command) && data_bot.ExistUser(userId)){
-      // Дописать реализацию
+    else if((command == "/door" ) && (data_bot.ExistUser(userId) || data_bot.IsAdmin(userId))){
+        
+        msg.text = "Open the door?\0";
+        inlineMenu.addButton("Yes", DATA_OPEN_DOOR);
+        inlineMenu.addButton("No", "open_door_no");
+        msg.setInlineMenu(inlineMenu);
     }
-    else if (!strcmp("/help", command) && (data_bot.ExistUser(userId) || data_bot.IsAdmin(userId))){
+    else if ((command == "/help" ) && (data_bot.ExistUser(userId) || data_bot.IsAdmin(userId))){
       // Вывод справочной информации
 
     }
-    else if(
-      !strncmp("/add_user", command, LEN_COMMAND_ADD_USER) && 
-      data_bot.IsAdmin(userId)){
-        if (data_bot.AddUser(command))
-          msg.text = "Success added";
-        else
-          msg.text = "Error add";
-
-    }
-    else if(!strcmp("/delete_users", command ) && 
+    // else if(
+    //   !strncmp("/add_user", command, LEN_COMMAND_ADD_USER) && 
+    //   data_bot.IsAdmin(userId)){
+    //     if (data_bot.AddUser(command))
+    //       msg.text = "Success added";
+    //     else
+    //       msg.text = "Error add";
+    //}
+    else if( (command == "/delete_users") && 
       data_bot.IsAdmin(userId)){
       // Дописать реализацию
     }
-    else if(!strcmp("/reset_admin", command) && 
+    else if((command == "/reset_admin") && 
       data_bot.IsAdmin(userId)){
       // Дописать реализацию
     }
@@ -99,8 +87,8 @@ void executeCommand(fb::Update& u){
 }
 
 
-void update_open_door(fb::Update& u){
-
+void openDoor(fb::Update& u){
+  Serial.println("Door opened!");
 }
 
 
@@ -115,8 +103,8 @@ void update (fb::Update& u){
 
     // ЛОГИКА ПОСЫЛАЕТСЯ КОМАНДА МЕНЮ, А МЫ ИНЛАЙН КНОПКУ ОТКРЫИТЬ
   
-    if (u.isQuery()){
-        update_open_door(u);
+    if (u.isQuery() && u.query().data() == DATA_OPEN_DOOR){
+        openDoor(u);
      }
     else if (u.isMessage()){
         executeCommand(u);

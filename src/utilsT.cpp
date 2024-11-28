@@ -1,5 +1,6 @@
 #include <string.h>
 #include <cctype>
+#include <FastBot2.h>
 #define MAX_USERS 4
 #define ADMIN_INDEX 0
 #define LEN_USER_ID 11
@@ -67,6 +68,7 @@ struct OnlyAccessUsers{
 
     }
     bool AddUser(const char* cmd){
+        //TODO
         if (_countUsers == MAX_USERS)
             return false;
         char *userId = _ParseUserId(cmd);
@@ -88,7 +90,7 @@ struct OnlyAccessUsers{
     bool IsAdmin(const char* userId){
         if (!HasAdmin()) return false;
 
-        return !strcmp(_users[0], userId);
+        return Text(_users[0]) ==  Text(userId);
     }
 
 };
